@@ -58,7 +58,7 @@ function fin() {
 
 # Clean stuff
 function clean() {
-	rm -rf out AnyKernel2/SiMontok* AnyKernel2/zImage
+	rm -rf out Gas-Build/AnyKernel2/SiMontok* Gas-Build/AnyKernel2/zImage
 }
 
 #
@@ -68,7 +68,7 @@ function clean() {
 # Main environtment
 KERNEL_DIR="$(pwd)"
 KERN_IMG="$KERNEL_DIR/out/arch/arm64/boot/Image.gz-dtb"
-ZIP_DIR="$KERNEL_DIR/AnyKernel2"
+ZIP_DIR="$KERNEL_DIR/Gas-Build/AnyKernel2"
 CONFIG="simontok_defconfig"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 THREAD="-j32"
@@ -120,7 +120,7 @@ zip -r9 SiMontok-Nusantara-${tanggal}.zip *
 BUILD_END=$(date +"%s")
 DIFF=$((${BUILD_END} - ${BUILD_START}))
 push
-cd ..
+cd ../..
 fin
 clean
 # Build end
