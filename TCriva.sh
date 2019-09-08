@@ -74,15 +74,17 @@ BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 THREAD="-j32"
 LOAD="-l32"
 ARM="arm64"
-CC="$(pwd)/clang/bin/clang"
+PATH="$(pwd)/clang/bin:${PATH}"
+CC="clang"
 CT="aarch64-linux-gnu-"
-GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
-GCC32="$(pwd)/gcc32/bin/arm-linux-gnueabi-"
+GCC32="arm-linux-gnueabi-"
+GCC="aarch64-linux-gnu-"
 
 # Export
 export ARCH=arm64
 export KBUILD_BUILD_USER=Keizzn
 export KBUILD_BUILD_HOST=NusantaraDevs
+export LD_LIBRARY_PATH=$(pwd)/clang/bin/../lib:$PATH
 
 # Build start
 tanggal=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
@@ -96,18 +98,16 @@ tg_channelcast "<b>SiMontok-Kernel-S</b> new build is up!" \
 		"For device <b>RIVA</b> (Redmi 5A)" \
 		"At branch <code>${BRANCH}</code>" \
                 "Last commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>" \
-                "Using Compiler: <code>$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')</code>" \
-		"Compiled with: <code>$(${GCC32}gcc --version | head -n 1)</code>" \
-		"Compiled with: <code>$(${GCC}gcc --version | head -n 1)</code>" \
+		"Compiled with: <code>NusantaraDevs clang version 10.0.0 (based on LLVM 10.0.0svn)</code>" \
 		"Started on <code>$(TZ=Asia/Jakarta date)</code>"
 
 make -s -C $(pwd) ${THREAD} ${LOAD} O=out ${CONFIG}
 make -C $(pwd) ${THREAD} ${LOAD} 2>&1 O=out \
 			       	      ARCH=${ARM} \
                         	      CC=${CC} \
-       		        	      CLANG_TRIPLE=${CT} \
-                     		      CROSS_COMPILE_ARM32=${GCC32} \
-				      CROSS_COMPILE=${GCC}
+				      CLANG_TRIPLE=${CT} \
+				      CROSS_COMPILE_ARM32=${GCC32} \
+				      CROSS_COMPILE=${GCC} | tee log.txt
 
 if ! [ -a ${KERN_IMG} ]; then
 	finerr
@@ -116,7 +116,7 @@ fi
 
 cp ${KERN_IMG} ${ZIP_DIR}/zImage
 cd ${ZIP_DIR}
-zip -r9 SiMontok-S-NusantaraTC-${tanggal}.zip *
+zip -r9 SiMontok-Riva-NusantaraTC-${tanggal}.zip *
 BUILD_END=$(date +"%s")
 DIFF=$((${BUILD_END} - ${BUILD_START}))
 push

@@ -54,7 +54,6 @@ function tg_sendstick() {
 # Fin prober
 function fin() {
 	tg_sendinfo "$(echo "Build took $((${DIFF} / 60)) minute(s) and $((${DIFF} % 60)) seconds.")"
-		    "$(echo "SiMontok-Kernel-S Rolex.")"
 }
 
 # Clean stuff
